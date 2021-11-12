@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from "react-native";
 
 function collectStyles(builder: any): any[] {
   if (builder._parent === undefined) {
@@ -9,9 +9,14 @@ function collectStyles(builder: any): any[] {
   return arr;
 }
 
-export type Builder<T extends StyleSheet.NamedStyles<any>, R extends any[]> = {
-  [K in keyof T]: Builder<T, [...R, T[K]]>;
-} & { mk: () => R };
+type Style = ViewStyle | TextStyle | ImageStyle;
+
+export type StyleBuilder<
+  T extends StyleSheet.NamedStyles<any>,
+  R extends any[]
+> = {
+  [K in keyof T]: StyleBuilder<T, [...R, T[K]]>;
+} & { mk: (extra?: Style) => R };
 
 type InternalBuilder = {
   new (parent: any, style: any): InternalBuilder;
@@ -19,12 +24,13 @@ type InternalBuilder = {
   _style: any;
   _build: any;
   _memo: Map<string, any>;
+  _extra: any;
   prototype: any;
 };
 
-export function create<T extends StyleSheet.NamedStyles<any>>(
-  o: T
-): Builder<T, []> {
+export function createChainableStylesheet<
+  T extends StyleSheet.NamedStyles<any>
+>(o: T): StyleBuilder<T, []> {
   // Create a new class.
   const Builder = function Builder(
     this: InternalBuilder,
@@ -53,13 +59,14 @@ export function create<T extends StyleSheet.NamedStyles<any>>(
   }
 
   // Finally we add the `mk` method.
-  Builder.prototype.mk = function () {
-    if (this._build !== undefined) {
+  Builder.prototype.mk = function (extra: Style) {
+    if (this._build !== undefined && this._extra === extra) {
       return this._build;
     }
     const build = collectStyles(this);
     this._build = build;
-    return build;
+    this._extra = extra;
+    return extra !== undefined ? [build, extra] : build;
   };
 
   return new Builder(undefined, undefined) as any;
