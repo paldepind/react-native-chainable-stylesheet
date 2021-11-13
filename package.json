@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "author": "Simon Friis Vindum <simonfv@gmail.com>",
   "license": "MIT",
-  "scripts": { "test": "jest" },
+  "scripts": {
+    "test": "jest"
+  },
   "dependencies": {
     "@types/react-native": "^0.66.4",
     "react-native": "^0.66.3"
@@ -17,5 +19,25 @@
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4"
   },
-  "prettier": {}
+  "prettier": {},
+  "jest": {
+    "preset": "react-native",
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "tsconfig.json"
+      }
+    },
+    "transform": {
+      "^.+\\.jsx$": "babel-jest",
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
 }

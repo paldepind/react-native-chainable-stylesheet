@@ -41,7 +41,7 @@ const styles = createChainable({
 });
 
 const Card = () =>
-  <View style={styles.rounded.row.fullX.bgGray.shadow.mk()}>
+  <View style={styles.rounded.row.fullX.bgGray.shadow}> // <- beautiful 🥲
     ...
   </View>
 ```
@@ -65,8 +65,7 @@ On the other hand, the styles returned by the chainable API are memoized. The
 same sequence of method calls always return the same object:
 
 ```javascript
-style.rounded.row.fullX.bgGray.mk() ===
-  style.rounded.row.fullX.bgGray().mk() // true
+style.rounded.row.fullX.bgGray === style.rounded.row.fullX.bgGray() // true
 ```
 
 This completely avoids allocation of new style objects and speeds up React
